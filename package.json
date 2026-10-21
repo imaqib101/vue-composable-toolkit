@@ -1,0 +1,18 @@
+{
+  "name": "vue-composable-toolkit",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Vue 3 composables with robust TypeScript definitions and testing suites",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vue": "^3.3.4"
+  }
+}
