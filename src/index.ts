@@ -9,4 +9,4 @@ export * from "./composables/useAsyncQueue";
 export * from "./composables/useClipboardState";
 export * from "./composables/useMediaQuery";
 export * from "./composables/useEventBus";
-export * from "./composables/usePermissions";
+export * from "./composables/usePermissions";export * from "./composables/useDebouncedQuery";
