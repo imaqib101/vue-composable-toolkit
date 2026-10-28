@@ -12,21 +12,22 @@ A high-performance, tree-shakeable collection of **Enterprise Vue 3 Composables*
 
 ## 📦 Composable Catalog
 
-| Composable | Category | Description | Key Capabilities |
-| :--- | :--- | :--- | :--- |
-| `useVirtualList` | **Performance** | High-density virtual scrolling window | Dynamic offsets, overscan buffers, programmatic `scrollToIndex` |
-| `useFormValidation` | **State & Forms** | Reactive form validation pipeline | Field dirty/touched flags, async validators, debounced execution |
-| `useLocalStorageState` | **State & Persistence** | Synchronized cross-tab storage | SSR-safe, custom (de)serialization, `StorageEvent` listeners |
-| `useNetworkStatus` | **Hardware & Web API** | Network connection & quality telemetry | Effective connection type (`4g`/`3g`), downlink, RTT, online/offline |
-| `useIntersectionObserver` | **DOM & Visibility** | Viewport visibility tracker | Configurable thresholds, root margins, `freezeOnceVisible` |
-| `useDebouncedRef` | **Timing Primitives** | Debounced reactive state | Immediate flush, pending state tracking, manual cancellation |
-| `useThrottledRef` | **Timing Primitives** | Throttled reactive state | Configurable leading & trailing edge execution |
+| Composable                | Category                | Description                            | Key Capabilities                                                     |
+| :------------------------ | :---------------------- | :------------------------------------- | :------------------------------------------------------------------- |
+| `useVirtualList`          | **Performance**         | High-density virtual scrolling window  | Dynamic offsets, overscan buffers, programmatic `scrollToIndex`      |
+| `useFormValidation`       | **State & Forms**       | Reactive form validation pipeline      | Field dirty/touched flags, async validators, debounced execution     |
+| `useLocalStorageState`    | **State & Persistence** | Synchronized cross-tab storage         | SSR-safe, custom (de)serialization, `StorageEvent` listeners         |
+| `useNetworkStatus`        | **Hardware & Web API**  | Network connection & quality telemetry | Effective connection type (`4g`/`3g`), downlink, RTT, online/offline |
+| `useIntersectionObserver` | **DOM & Visibility**    | Viewport visibility tracker            | Configurable thresholds, root margins, `freezeOnceVisible`           |
+| `useDebouncedRef`         | **Timing Primitives**   | Debounced reactive state               | Immediate flush, pending state tracking, manual cancellation         |
+| `useThrottledRef`         | **Timing Primitives**   | Throttled reactive state               | Configurable leading & trailing edge execution                       |
 
 ---
 
 ## 🚀 Usage Guide
 
 ### 1. `useVirtualList` — Virtual Scrolling for Massive Datasets
+
 Render tens of thousands of items with zero frame drops:
 
 ```vue
@@ -36,12 +37,13 @@ import { useVirtualList } from "vue-composable-toolkit";
 
 const items = ref(Array.from({ length: 50000 }, (_, i) => ({ id: i, name: `User #${i}` })));
 
-const { virtualRows, totalHeight, offsetY, containerProps, wrapperProps, scrollToIndex } = useVirtualList({
-  items,
-  itemHeight: 48,
-  containerHeight: 600,
-  overscan: 5
-});
+const { virtualRows, totalHeight, offsetY, containerProps, wrapperProps, scrollToIndex } =
+  useVirtualList({
+    items,
+    itemHeight: 48,
+    containerHeight: 600,
+    overscan: 5
+  });
 </script>
 
 <template>
@@ -63,6 +65,7 @@ const { virtualRows, totalHeight, offsetY, containerProps, wrapperProps, scrollT
 ---
 
 ### 2. `useFormValidation` — Enterprise Reactive Forms
+
 Field-level synchronous & asynchronous validation with dirty state tracking:
 
 ```typescript
@@ -95,6 +98,7 @@ const submit = form.handleSubmit(async (values) => {
 ---
 
 ### 3. `useLocalStorageState` — Cross-Tab Synchronized Storage
+
 Fully typed, SSR-compatible, and reactive across browser tabs:
 
 ```typescript
@@ -105,10 +109,14 @@ interface UserPreferences {
   fontSize: number;
 }
 
-const prefs = useLocalStorageState<UserPreferences>("app_prefs", {
-  theme: "dark",
-  fontSize: 14
-}, { syncTabs: true });
+const prefs = useLocalStorageState<UserPreferences>(
+  "app_prefs",
+  {
+    theme: "dark",
+    fontSize: 14
+  },
+  { syncTabs: true }
+);
 
 // Mutating prefs automatically persists to localStorage and synchronizes across all open browser tabs!
 prefs.value.theme = "light";
@@ -129,5 +137,6 @@ npm test
 ## 👤 Author
 
 **Mohammed Aqib**
+
 - GitHub: [@imaqib101](https://github.com/imaqib101)
 - Location: Bengaluru, India

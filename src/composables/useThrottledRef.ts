@@ -1,4 +1,4 @@
-import { ref, customRef, type Ref } from "vue";
+import { customRef, type Ref } from "vue";
 
 export interface ThrottledRefOptions {
   delay?: number;

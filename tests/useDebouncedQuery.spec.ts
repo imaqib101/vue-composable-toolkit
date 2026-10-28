@@ -3,8 +3,12 @@ import { ref, nextTick } from "vue";
 import { useDebouncedQuery } from "../src/composables/useDebouncedQuery";
 
 describe("useDebouncedQuery", () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it("debounces rapid changes into a single fetch", async () => {
     const fetcher = vi.fn(async (q: string) => `result:${q}`);

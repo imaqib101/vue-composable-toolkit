@@ -1,4 +1,4 @@
-import { ref, getCurrentInstance, onUnmounted } from 'vue';
+import { ref, getCurrentInstance, onUnmounted } from "vue";
 
 export type EventHandler<T = unknown> = (payload: T) => void;
 
@@ -11,15 +11,10 @@ type ListenersMap<Events extends Record<string, unknown>> = {
   [K in keyof Events]?: HandlerSet<Events[K]>;
 };
 
-export function useEventBus<Events extends Record<string, unknown>>(
-  options?: EventBusOptions
-) {
+export function useEventBus<Events extends Record<string, unknown>>(options?: EventBusOptions) {
   const listeners = ref<ListenersMap<Events>>({} as ListenersMap<Events>);
 
-  function on<K extends keyof Events>(
-    event: K,
-    handler: EventHandler<Events[K]>
-  ): () => void {
+  function on<K extends keyof Events>(event: K, handler: EventHandler<Events[K]>): () => void {
     if (!listeners.value[event]) {
       listeners.value[event] = new Set<EventHandler<Events[K]>>();
     }
@@ -43,10 +38,7 @@ export function useEventBus<Events extends Record<string, unknown>>(
     }
   }
 
-  function once<K extends keyof Events>(
-    event: K,
-    handler: EventHandler<Events[K]>
-  ): () => void {
+  function once<K extends keyof Events>(event: K, handler: EventHandler<Events[K]>): () => void {
     const wrapper: EventHandler<Events[K]> = (payload) => {
       // Unsubscribe first so a throwing handler is still only called once.
       off(event, wrapper);
@@ -55,10 +47,7 @@ export function useEventBus<Events extends Record<string, unknown>>(
     return on(event, wrapper);
   }
 
-  function off<K extends keyof Events>(
-    event: K,
-    handler?: EventHandler<Events[K]>
-  ): void {
+  function off<K extends keyof Events>(event: K, handler?: EventHandler<Events[K]>): void {
     if (!handler) {
       delete listeners.value[event];
       return;

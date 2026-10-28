@@ -22,7 +22,7 @@ describe("useVirtualList", () => {
   });
 
   it("updates slice dynamically when scroll occurs", () => {
-    const { virtualRows, totalHeight, offsetY, containerProps } = useVirtualList({
+    const { virtualRows, offsetY, containerProps } = useVirtualList({
       items,
       itemHeight: 50,
       containerHeight: 500,

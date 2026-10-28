@@ -13,9 +13,7 @@ export interface UseClipboardStateReturn {
   copy: (textToCopy: string) => Promise<boolean>;
 }
 
-export function useClipboardState(
-  options: UseClipboardStateOptions = {}
-): UseClipboardStateReturn {
+export function useClipboardState(options: UseClipboardStateOptions = {}): UseClipboardStateReturn {
   const timeout = options.timeout ?? 2000;
   const nav = options.navigator ?? (typeof navigator !== "undefined" ? navigator : undefined);
 
@@ -23,7 +21,9 @@ export function useClipboardState(
   const copied = ref<boolean>(false);
   const error = ref<Error | null>(null);
 
-  const isSupported = Boolean(nav && "clipboard" in nav && typeof nav.clipboard.writeText === "function");
+  const isSupported = Boolean(
+    nav && "clipboard" in nav && typeof nav.clipboard.writeText === "function"
+  );
   let timer: any = null;
 
   async function copy(textToCopy: string): Promise<boolean> {
