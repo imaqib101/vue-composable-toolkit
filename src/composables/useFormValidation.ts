@@ -1,4 +1,4 @@
-import { reactive, computed, ref, type Ref } from "vue";
+import { reactive, computed, ref } from "vue";
 
 export type ValidatorFn<T> = (value: T) => string | null | Promise<string | null>;
 
