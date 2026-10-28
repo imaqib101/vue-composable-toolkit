@@ -84,4 +84,23 @@ describe('useEventBus', () => {
     bus.emit('count', 1);
     expect(log).toEqual([]);
   });
+
+  it('once: a throwing handler is still removed after the first call', () => {
+    const onError = vi.fn();
+    const bus = useEventBus<TestEvents>({ onError });
+    bus.once('count', () => {
+      throw new Error('boom');
+    });
+    bus.emit('count', 1);
+    bus.emit('count', 2);
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(bus.listenerCount('count')).toBe(0);
+  });
+
+  it('does not warn when used outside a component setup', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    useEventBus<TestEvents>();
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
 });
