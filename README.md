@@ -1,142 +1,226 @@
-# Vue Composable Toolkit ⚡
+# vue-composable-toolkit
 
-[![Vue 3](https://img.shields.io/badge/Vue-3.4+-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-Tested-729B1B?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
-[![Tree-shakeable](https://img.shields.io/badge/ESM-Tree--shakeable-success?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![CI](https://github.com/imaqib101/vue-composable-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/imaqib101/vue-composable-toolkit/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Vue 3.3+](https://img.shields.io/badge/Vue-3.3%2B-4FC08D?logo=vue.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-007ACC?logo=typescript&logoColor=white)
 
-A high-performance, tree-shakeable collection of **Enterprise Vue 3 Composables** written in strict TypeScript. Built for complex data-dense frontend applications requiring rock-solid reactivity, virtual scrolling, reactive form validation pipelines, and cross-tab storage synchronization.
+A small collection of Vue 3 composables written in strict TypeScript. ESM only, tree-shakeable
+(`sideEffects: false`), with `vue` as a peer dependency.
 
----
+## Installation
 
-## 📦 Composable Catalog
-
-| Composable                | Category                | Description                            | Key Capabilities                                                     |
-| :------------------------ | :---------------------- | :------------------------------------- | :------------------------------------------------------------------- |
-| `useVirtualList`          | **Performance**         | High-density virtual scrolling window  | Dynamic offsets, overscan buffers, programmatic `scrollToIndex`      |
-| `useFormValidation`       | **State & Forms**       | Reactive form validation pipeline      | Field dirty/touched flags, async validators, debounced execution     |
-| `useLocalStorageState`    | **State & Persistence** | Synchronized cross-tab storage         | SSR-safe, custom (de)serialization, `StorageEvent` listeners         |
-| `useNetworkStatus`        | **Hardware & Web API**  | Network connection & quality telemetry | Effective connection type (`4g`/`3g`), downlink, RTT, online/offline |
-| `useIntersectionObserver` | **DOM & Visibility**    | Viewport visibility tracker            | Configurable thresholds, root margins, `freezeOnceVisible`           |
-| `useDebouncedRef`         | **Timing Primitives**   | Debounced reactive state               | Immediate flush, pending state tracking, manual cancellation         |
-| `useThrottledRef`         | **Timing Primitives**   | Throttled reactive state               | Configurable leading & trailing edge execution                       |
-
----
-
-## 🚀 Usage Guide
-
-### 1. `useVirtualList` — Virtual Scrolling for Massive Datasets
-
-Render tens of thousands of items with zero frame drops:
-
-```vue
-<script setup lang="ts">
-import { ref } from "vue";
-import { useVirtualList } from "vue-composable-toolkit";
-
-const items = ref(Array.from({ length: 50000 }, (_, i) => ({ id: i, name: `User #${i}` })));
-
-const { virtualRows, totalHeight, offsetY, containerProps, wrapperProps, scrollToIndex } =
-  useVirtualList({
-    items,
-    itemHeight: 48,
-    containerHeight: 600,
-    overscan: 5
-  });
-</script>
-
-<template>
-  <div v-bind="containerProps" class="virtual-container">
-    <div v-bind="wrapperProps" class="virtual-wrapper">
-      <div
-        v-for="row in virtualRows"
-        :key="row.data.id"
-        class="virtual-row"
-        :style="{ height: '48px' }"
-      >
-        <span>{{ row.data.name }}</span>
-      </div>
-    </div>
-  </div>
-</template>
-```
-
----
-
-### 2. `useFormValidation` — Enterprise Reactive Forms
-
-Field-level synchronous & asynchronous validation with dirty state tracking:
-
-```typescript
-import { useFormValidation } from "vue-composable-toolkit";
-
-const form = useFormValidation({
-  email: {
-    initialValue: "",
-    rules: [
-      (v) => (!v ? "Email is required" : null),
-      (v) => (!v.includes("@") ? "Invalid email domain" : null)
-    ]
-  },
-  username: {
-    initialValue: "",
-    rules: [
-      async (v) => {
-        const available = await checkUsernameAvailability(v);
-        return available ? null : "Username is already taken";
-      }
-    ]
-  }
-});
-
-const submit = form.handleSubmit(async (values) => {
-  await api.post("/users", values);
-});
-```
-
----
-
-### 3. `useLocalStorageState` — Cross-Tab Synchronized Storage
-
-Fully typed, SSR-compatible, and reactive across browser tabs:
-
-```typescript
-import { useLocalStorageState } from "vue-composable-toolkit";
-
-interface UserPreferences {
-  theme: "dark" | "light";
-  fontSize: number;
-}
-
-const prefs = useLocalStorageState<UserPreferences>(
-  "app_prefs",
-  {
-    theme: "dark",
-    fontSize: 14
-  },
-  { syncTabs: true }
-);
-
-// Mutating prefs automatically persists to localStorage and synchronizes across all open browser tabs!
-prefs.value.theme = "light";
-```
-
----
-
-## 🧪 Testing
-
-Every composable is verified against strict Vitest suites testing lifecycle mounting, unmounting cleanup, and edge conditions:
+The package is not published to npm yet. Install it from GitHub:
 
 ```bash
-npm test
+npm install github:imaqib101/vue-composable-toolkit vue
 ```
 
----
+Requires Vue `^3.3.0` and Node 18+ for tooling.
 
-## 👤 Author
+## Composables
 
-**Mohammed Aqib**
+All composables are exported from the package root: `import { useX } from "vue-composable-toolkit"`.
+Every composable is SSR-safe (it guards `window`/`navigator`) and works outside components; lifecycle
+hooks are only registered when called inside `setup()`.
 
-- GitHub: [@imaqib101](https://github.com/imaqib101)
-- Location: Bengaluru, India
+| Composable                | Purpose                                                                |
+| ------------------------- | ---------------------------------------------------------------------- |
+| `useDebouncedRef`         | Ref whose value updates after a quiet period                           |
+| `useThrottledRef`         | Ref whose updates are rate-limited (leading/trailing)                  |
+| `useDebouncedQuery`       | Debounced async fetch for a query ref, with abort and no stale results |
+| `useVirtualList`          | Windowed rendering for long lists with fixed item height               |
+| `useFormValidation`       | Reactive form state with sync/async per-field rules                    |
+| `useLocalStorageState`    | Ref persisted to `localStorage`, synced across tabs                    |
+| `useNetworkStatus`        | Online state and Network Information API details                       |
+| `useIntersectionObserver` | Reactive `IntersectionObserver` for a template ref                     |
+| `useMediaQuery`           | Reactive `matchMedia` result                                           |
+| `useClipboardState`       | Copy to clipboard with a transient `copied` flag                       |
+| `useAsyncQueue`           | Concurrency-limited promise queue with retries and pause               |
+| `useEventBus`             | Typed in-memory event emitter                                          |
+| `usePermissions`          | Role/permission checks as computed values                              |
+
+### useDebouncedRef
+
+```ts
+const { value, isPending, cancel, flush } = useDebouncedRef("", 300); // or { delay: 300 }
+value.value = "abc"; // `value.value` updates after 300 ms of silence
+flush(); // apply the pending value now (optionally flush(newValue))
+cancel(); // drop the pending value
+```
+
+### useThrottledRef
+
+```ts
+const count = useThrottledRef(0, { delay: 200, leading: true, trailing: true });
+```
+
+Returns a plain `Ref<T>`. Defaults: `delay` 300, `leading` true, `trailing` true.
+
+### useDebouncedQuery
+
+```ts
+const query = ref("");
+const { data, loading, error } = useDebouncedQuery(
+  (q, signal) => fetch(`/api/search?q=${q}`, { signal }).then((r) => r.json()),
+  query,
+  { debounceMs: 300, initialValue: [] }
+);
+```
+
+Superseded requests are aborted and their results ignored. A blank query resets `data` to
+`initialValue` without calling the fetcher.
+
+### useVirtualList
+
+```ts
+const {
+  virtualRows,
+  totalHeight,
+  offsetY,
+  scrollTop,
+  containerProps,
+  wrapperProps,
+  scrollToIndex
+} = useVirtualList({ items, itemHeight: 48, containerHeight: 600, overscan: 3 });
+```
+
+```vue
+<div v-bind="containerProps">
+  <div :style="wrapperProps.style.value">
+    <div v-for="row in virtualRows" :key="row.index" style="height: 48px">{{ row.data.name }}</div>
+  </div>
+</div>
+```
+
+`items` may be an array or a ref. `virtualRows` holds `{ data, index }` entries. In templates,
+`wrapperProps.style` is a computed, so pass `wrapperProps.style.value`
+(it is not auto-unwrapped because `wrapperProps` is a plain object).
+
+### useFormValidation
+
+```ts
+const form = useFormValidation({
+  email: { initialValue: "", rules: [(v) => (v.includes("@") ? null : "Invalid email")] },
+  username: { initialValue: "", rules: [async (v) => ((await isFree(v)) ? null : "Taken")] }
+});
+
+form.setFieldValue("email", "a@b.c"); // marks dirty and validates
+await form.validateField("email"); // boolean
+await form.validateAll(); // marks all touched
+const submit = form.handleSubmit(async (values) => save(values)); // use as @submit handler
+form.resetForm();
+```
+
+Returned: `values`, `errors`, `isDirtyField`, `isTouchedField`, `isValidatingField`, `isValid`,
+`isDirty`, `isValidating`, `isSubmitting`, `validateField`, `validateAll`, `setFieldValue`,
+`setFieldTouched`, `resetForm`, `handleSubmit`. A rule returns an error message or `null`; rules for a
+field run in order and stop at the first error.
+
+### useLocalStorageState
+
+```ts
+const prefs = useLocalStorageState("prefs", { theme: "dark" }, { syncTabs: true });
+prefs.value.theme = "light"; // persisted (deep watch)
+```
+
+Options: `serializer` (default `JSON.stringify`), `deserializer` (default `JSON.parse`),
+`onError` (default `console.error`), `syncTabs` (default `true`). Setting the value to
+`null`/`undefined` removes the key. The `storage` listener is removed when the owning effect scope is
+disposed.
+
+### useNetworkStatus
+
+```ts
+const { isOnline, downlink, rtt, effectiveType, saveData } = useNetworkStatus();
+```
+
+`downlink`, `rtt` and `effectiveType` are `null` where the Network Information API is unavailable.
+
+### useIntersectionObserver
+
+```ts
+const { targetRef, isIntersecting, stop } = useIntersectionObserver({
+  root: null,
+  rootMargin: "0px",
+  threshold: 0,
+  freezeOnceVisible: false
+});
+```
+
+Bind `targetRef` with `ref="targetRef"`. Where `IntersectionObserver` is missing, `isIntersecting` is `true`.
+
+### useMediaQuery
+
+```ts
+const isWide = useMediaQuery("(min-width: 1024px)", { defaultValue: false });
+```
+
+### useClipboardState
+
+```ts
+const { copy, copied, text, error, isSupported } = useClipboardState({ timeout: 2000 });
+const ok = await copy("hello"); // false (and `error` set) if unsupported or rejected
+```
+
+### useAsyncQueue
+
+```ts
+const queue = useAsyncQueue({ concurrency: 2, maxRetries: 1, retryDelayMs: 50 });
+const result = await queue.push(() => fetchThing(), "optional-id");
+await queue.onIdle();
+```
+
+Returned: `pendingCount`, `activeCount`, `completedCount`, `failedCount`, `isPaused`, `push`,
+`pause`, `resume`, `clear` (rejects queued tasks with `Error("Queue cleared")`), `onIdle`.
+
+### useEventBus
+
+```ts
+const bus = useEventBus<{ greet: string }>({ onError: (err, event) => report(err, event) });
+const off = bus.on("greet", (name) => console.log(name));
+bus.once("greet", handler);
+bus.emit("greet", "world");
+bus.off("greet", handler); // or bus.off("greet") to remove all handlers
+bus.listenerCount("greet");
+bus.clear(); // also called automatically on component unmount
+```
+
+Handler errors are routed to `onError`, or `console.error` if not provided.
+
+### usePermissions
+
+```ts
+const perms = usePermissions({
+  roles: ["editor"],
+  permissions: ["export"],
+  roleMap: { editor: ["post:write"] }
+});
+perms.hasPermission("post:write").value; // true
+perms.hasAnyPermission("a", "b"); // ComputedRef<boolean>
+perms.hasAllPermissions("a", "b"); // ComputedRef<boolean>
+perms.hasRole("editor"); // ComputedRef<boolean>
+perms.grantRole("admin");
+perms.revokeRole("admin");
+perms.grantPermission("x");
+perms.revokePermission("x");
+```
+
+Also returns `activeRoles` and `activePermissions` (explicit permissions plus those derived from roles).
+
+## Development
+
+```bash
+npm ci
+npm run lint          # ESLint
+npm run format:check  # Prettier
+npm run typecheck     # src + tests
+npm run build         # emit dist/
+npm test              # Vitest
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+[MIT](LICENSE) © Mohammed Aqib
