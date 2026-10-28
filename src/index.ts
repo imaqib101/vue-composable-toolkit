@@ -9,4 +9,5 @@ export * from "./composables/useAsyncQueue.js";
 export * from "./composables/useClipboardState.js";
 export * from "./composables/useMediaQuery.js";
 export * from "./composables/useEventBus.js";
-export * from "./composables/usePermissions.js";export * from "./composables/useDebouncedQuery.js";
+export * from "./composables/usePermissions.js";
+export * from "./composables/useDebouncedQuery.js";

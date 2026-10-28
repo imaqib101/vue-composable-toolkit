@@ -8,7 +8,10 @@ class FakeObserver {
   static instances: FakeObserver[] = [];
   observe = vi.fn();
   disconnect = vi.fn();
-  constructor(public callback: Callback, public options: unknown) {
+  constructor(
+    public callback: Callback,
+    public options: unknown
+  ) {
     FakeObserver.instances.push(this);
   }
 }

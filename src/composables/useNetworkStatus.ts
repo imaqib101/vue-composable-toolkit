@@ -20,7 +20,8 @@ export function useNetworkStatus(): NetworkInformationState {
 
     isOnline.value = navigator.onLine;
 
-    const connection = (navigator as any).connection ||
+    const connection =
+      (navigator as any).connection ||
       (navigator as any).mozConnection ||
       (navigator as any).webkitConnection;
 
@@ -48,7 +49,8 @@ export function useNetworkStatus(): NetworkInformationState {
       window.addEventListener("online", onOnline);
       window.addEventListener("offline", onOffline);
 
-      connectionObj = (navigator as any)?.connection ||
+      connectionObj =
+        (navigator as any)?.connection ||
         (navigator as any)?.mozConnection ||
         (navigator as any)?.webkitConnection;
 

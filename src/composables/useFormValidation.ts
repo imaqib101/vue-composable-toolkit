@@ -19,9 +19,7 @@ export interface FieldState<T> {
   isTouched: boolean;
 }
 
-export function useFormValidation<TForm extends Record<string, any>>(
-  schema: FormSchema<TForm>
-) {
+export function useFormValidation<TForm extends Record<string, any>>(schema: FormSchema<TForm>) {
   type Keys = keyof TForm;
 
   const formValues = reactive<Record<string, any>>({}) as TForm;

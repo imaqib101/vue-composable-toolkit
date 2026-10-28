@@ -28,9 +28,7 @@ export interface UseAsyncQueueReturn<T = any> {
   onIdle: () => Promise<void>;
 }
 
-export function useAsyncQueue<T = any>(
-  options: UseAsyncQueueOptions = {}
-): UseAsyncQueueReturn<T> {
+export function useAsyncQueue<T = any>(options: UseAsyncQueueOptions = {}): UseAsyncQueueReturn<T> {
   const concurrency = options.concurrency ?? 1;
   const maxRetries = options.maxRetries ?? 0;
   const retryDelayMs = options.retryDelayMs ?? 50;

@@ -1,4 +1,4 @@
-import { computed, ref, type ComputedRef, type Ref } from 'vue';
+import { computed, ref, type ComputedRef, type Ref } from "vue";
 
 export type Permission = string;
 export type Role = string;
@@ -16,9 +16,7 @@ export function usePermissions(options: PermissionsOptions = {}) {
   const explicitPermissions: Ref<Permission[]> = ref([...(options.permissions ?? [])]);
 
   const activePermissions: ComputedRef<Permission[]> = computed(() => {
-    const derived: Permission[] = activeRoles.value.flatMap(
-      (role) => roleMap[role] ?? []
-    );
+    const derived: Permission[] = activeRoles.value.flatMap((role) => roleMap[role] ?? []);
     return Array.from(new Set([...explicitPermissions.value, ...derived]));
   });
 
@@ -31,15 +29,11 @@ export function usePermissions(options: PermissionsOptions = {}) {
   }
 
   function hasAnyPermission(...perms: Permission[]): ComputedRef<boolean> {
-    return computed(() =>
-      perms.some((p) => activePermissions.value.includes(p))
-    );
+    return computed(() => perms.some((p) => activePermissions.value.includes(p)));
   }
 
   function hasAllPermissions(...perms: Permission[]): ComputedRef<boolean> {
-    return computed(() =>
-      perms.every((p) => activePermissions.value.includes(p))
-    );
+    return computed(() => perms.every((p) => activePermissions.value.includes(p)));
   }
 
   function grantRole(role: Role): void {
@@ -72,6 +66,6 @@ export function usePermissions(options: PermissionsOptions = {}) {
     grantRole,
     revokeRole,
     grantPermission,
-    revokePermission,
+    revokePermission
   };
 }
