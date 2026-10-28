@@ -1,4 +1,4 @@
-import { ref, watch, type Ref } from "vue";
+import { ref, watch, getCurrentScope, onScopeDispose, type Ref } from "vue";
 
 export interface UseLocalStorageOptions<T> {
   serializer?: (value: T) => string;
@@ -38,7 +38,7 @@ export function useLocalStorageState<T>(
   const state = ref<T>(readValue()) as Ref<T>;
 
   // Sync state changes to localStorage
-  watch(
+  const stopWatch = watch(
     state,
     (newVal) => {
       if (typeof window === "undefined" || !window.localStorage) return;
@@ -67,6 +67,13 @@ export function useLocalStorageState<T>(
       }
     };
     window.addEventListener("storage", onStorage);
+
+    if (getCurrentScope()) {
+      onScopeDispose(() => {
+        window.removeEventListener("storage", onStorage);
+        stopWatch();
+      });
+    }
   }
 
   return state;

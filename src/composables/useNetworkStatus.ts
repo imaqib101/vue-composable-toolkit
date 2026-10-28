@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted, type Ref } from "vue";
+import { ref, getCurrentInstance, onMounted, onUnmounted, type Ref } from "vue";
 
 export interface NetworkInformationState {
   isOnline: Ref<boolean>;
@@ -43,7 +43,7 @@ export function useNetworkStatus(): NetworkInformationState {
 
   let connectionObj: any = null;
 
-  onMounted(() => {
+  const attach = () => {
     if (typeof window !== "undefined") {
       window.addEventListener("online", onOnline);
       window.addEventListener("offline", onOffline);
@@ -57,17 +57,25 @@ export function useNetworkStatus(): NetworkInformationState {
       }
     }
     updateNetworkInfo();
-  });
+  };
 
-  onUnmounted(() => {
+  const detach = () => {
     if (typeof window !== "undefined") {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
       if (connectionObj) {
         connectionObj.removeEventListener("change", updateNetworkInfo);
       }
+      connectionObj = null;
     }
-  });
+  };
+
+  if (getCurrentInstance()) {
+    onMounted(attach);
+    onUnmounted(detach);
+  } else {
+    attach();
+  }
 
   // Call immediately for initial state
   updateNetworkInfo();

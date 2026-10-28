@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue';
+import { ref, getCurrentInstance, onUnmounted } from 'vue';
 
 export type EventHandler<T = unknown> = (payload: T) => void;
 
@@ -48,8 +48,9 @@ export function useEventBus<Events extends Record<string, unknown>>(
     handler: EventHandler<Events[K]>
   ): () => void {
     const wrapper: EventHandler<Events[K]> = (payload) => {
-      handler(payload);
+      // Unsubscribe first so a throwing handler is still only called once.
       off(event, wrapper);
+      handler(payload);
     };
     return on(event, wrapper);
   }
@@ -80,12 +81,8 @@ export function useEventBus<Events extends Record<string, unknown>>(
   }
 
   // Auto-cleanup when used inside a component setup
-  try {
-    onUnmounted(() => {
-      clear();
-    });
-  } catch {
-    // Not inside a component setup context — skip auto-cleanup
+  if (getCurrentInstance()) {
+    onUnmounted(clear);
   }
 
   return { on, emit, once, off, clear, listenerCount };
