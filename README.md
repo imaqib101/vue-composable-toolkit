@@ -14,6 +14,7 @@ A high-performance, tree-shakeable collection of **Enterprise Vue 3 Composables*
 
 | Composable | Category | Description | Key Capabilities |
 | :--- | :--- | :--- | :--- |
+| `useAsyncRetry` | **Async & Resilience** | Async retry controller with backoff | Exponential/linear/fixed backoff, jitter, retryIf filter, abort handle |
 | `useVirtualList` | **Performance** | High-density virtual scrolling window | Dynamic offsets, overscan buffers, programmatic `scrollToIndex` |
 | `useFormValidation` | **State & Forms** | Reactive form validation pipeline | Field dirty/touched flags, async validators, debounced execution |
 | `useLocalStorageState` | **State & Persistence** | Synchronized cross-tab storage | SSR-safe, custom (de)serialization, `StorageEvent` listeners |
@@ -112,6 +113,38 @@ const prefs = useLocalStorageState<UserPreferences>("app_prefs", {
 
 // Mutating prefs automatically persists to localStorage and synchronizes across all open browser tabs!
 prefs.value.theme = "light";
+```
+
+### Resilient Async Operations with Backoff (`useAsyncRetry`)
+
+```vue
+<script setup lang="ts">
+import { useAsyncRetry } from "vue-composable-toolkit";
+
+const { data, error, loading, isRetrying, retryCount, execute, abort } = useAsyncRetry(
+  async (orderId: string) => {
+    const res = await fetch(`/api/orders/${orderId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  },
+  {
+    maxRetries: 3,
+    delay: 1000,
+    backoff: "exponential",
+    retryIf: (err: any) => !err.message.includes("404"), // Don't retry non-existent orders
+    onRetry: (attempt, err, delayMs) => {
+      console.warn(`Retry attempt #${attempt} after ${delayMs}ms due to:`, err);
+    },
+  }
+);
+</script>
+
+<template>
+  <button :disabled="loading" @click="execute('ORD-1234')">Fetch Order</button>
+  <span v-if="isRetrying">Retrying (attempt {{ retryCount }}/3)...</span>
+  <div v-if="data">{{ data }}</div>
+  <div v-if="error" class="error">{{ error.message }}</div>
+</template>
 ```
 
 ---
