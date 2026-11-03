@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue';
+import { ref, getCurrentScope, onScopeDispose } from 'vue';
 
 export type EventHandler<T = unknown> = (payload: T) => void;
 
@@ -79,13 +79,11 @@ export function useEventBus<Events extends Record<string, unknown>>(
     return (listeners.value[event] as HandlerSet<Events[K]> | undefined)?.size ?? 0;
   }
 
-  // Auto-cleanup when used inside a component setup
-  try {
-    onUnmounted(() => {
+  // Auto-cleanup when used inside a component setup or active effect scope
+  if (getCurrentScope()) {
+    onScopeDispose(() => {
       clear();
     });
-  } catch {
-    // Not inside a component setup context — skip auto-cleanup
   }
 
   return { on, emit, once, off, clear, listenerCount };

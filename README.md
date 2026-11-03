@@ -149,6 +149,27 @@ const { data, error, loading, isRetrying, retryCount, execute, abort } = useAsyn
 
 ---
 
+### 5. `useDebouncedQuery` — Resilient Debounced Search with AbortSignal
+Automatically debounces asynchronous query execution, automatically passes an `AbortSignal` to cancel stale in-flight requests, and provides reactive `data`, `loading`, `isPending`, and `error` states:
+
+```typescript
+import { ref } from "vue";
+import { useDebouncedQuery } from "vue-composable-toolkit";
+
+const searchInput = ref("");
+
+const { data: searchResults, loading, isPending, error, execute, cancel } = useDebouncedQuery(
+  async (query, signal) => {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, { signal });
+    return res.json();
+  },
+  searchInput,
+  { debounceMs: 300, minQueryLength: 2, initialValue: [] }
+);
+```
+
+---
+
 ## 🧪 Testing
 
 Every composable is verified against strict Vitest suites testing lifecycle mounting, unmounting cleanup, and edge conditions:
