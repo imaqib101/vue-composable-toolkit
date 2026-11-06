@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted, type Ref } from "vue";
+import { ref, onMounted, onUnmounted, getCurrentScope, onScopeDispose, type Ref } from "vue";
 
 export interface NetworkInformationState {
   isOnline: Ref<boolean>;
@@ -43,7 +43,7 @@ export function useNetworkStatus(): NetworkInformationState {
 
   let connectionObj: any = null;
 
-  onMounted(() => {
+  const setupListeners = () => {
     if (typeof window !== "undefined") {
       window.addEventListener("online", onOnline);
       window.addEventListener("offline", onOffline);
@@ -57,9 +57,9 @@ export function useNetworkStatus(): NetworkInformationState {
       }
     }
     updateNetworkInfo();
-  });
+  };
 
-  onUnmounted(() => {
+  const cleanupListeners = () => {
     if (typeof window !== "undefined") {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
@@ -67,7 +67,15 @@ export function useNetworkStatus(): NetworkInformationState {
         connectionObj.removeEventListener("change", updateNetworkInfo);
       }
     }
-  });
+  };
+
+  if (getCurrentScope()) {
+    onScopeDispose(cleanupListeners);
+    setupListeners();
+  } else {
+    onMounted(setupListeners);
+    onUnmounted(cleanupListeners);
+  }
 
   // Call immediately for initial state
   updateNetworkInfo();
