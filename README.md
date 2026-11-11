@@ -15,6 +15,7 @@ A high-performance, tree-shakeable collection of **Enterprise Vue 3 Composables*
 | Composable | Category | Description | Key Capabilities |
 | :--- | :--- | :--- | :--- |
 | `useAsyncRetry` | **Async & Resilience** | Async retry controller with backoff | Exponential/linear/fixed backoff, jitter, retryIf filter, abort handle |
+| `useWebSocket` | **Realtime & Network** | Reactive WebSocket connection client | Auto-reconnect with backoff, heartbeat ping/pong, JSON auto-parse, scope cleanup |
 | `useVirtualList` | **Performance** | High-density virtual scrolling window | Dynamic offsets, overscan buffers, programmatic `scrollToIndex` |
 | `useFormValidation` | **State & Forms** | Reactive form validation pipeline | Field dirty/touched flags, async validators, debounced execution |
 | `useLocalStorageState` | **State & Persistence** | Synchronized cross-tab storage | SSR-safe, custom (de)serialization, `StorageEvent` listeners |
@@ -165,6 +166,35 @@ const { data: searchResults, loading, isPending, error, execute, cancel } = useD
   },
   searchInput,
   { debounceMs: 300, minQueryLength: 2, initialValue: [] }
+);
+```
+
+---
+
+### 6. `useWebSocket` — Reactive WebSocket Client with Heartbeat & Backoff
+Zero-dependency, reactive WebSocket composable with automatic JSON serialization, exponential reconnection backoff, configurable heartbeat ping/pong keepalives, and automatic scope disposal:
+
+```typescript
+import { useWebSocket } from "vue-composable-toolkit";
+
+const { data, status, send, close } = useWebSocket<{ price: number; symbol: string }>(
+  "wss://stream.binance.com/ws/btcusdt",
+  {
+    autoReconnect: {
+      retries: 5,
+      delay: 1000,
+      backoffMultiplier: 1.5,
+    },
+    heartbeat: {
+      message: { ping: true },
+      interval: 15000,
+      pongTimeout: 5000,
+    },
+    onConnected: () => console.log("WebSocket connected"),
+    onMessage: (ws, event, message) => {
+      console.log(`Latest ticker: ${message.symbol} @ $${message.price}`);
+    },
+  }
 );
 ```
 
