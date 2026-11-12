@@ -13,4 +13,5 @@ export * from "./composables/usePermissions";
 export * from "./composables/useAsyncRetry";
 export * from "./composables/useDebouncedQuery";
 export * from "./composables/useWebSocket";
+export * from "./composables/usePrevious";
 
