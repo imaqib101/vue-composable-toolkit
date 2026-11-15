@@ -19,6 +19,7 @@ A high-performance, tree-shakeable collection of **Enterprise Vue 3 Composables*
 | `useVirtualList` | **Performance** | High-density virtual scrolling window | Dynamic offsets, overscan buffers, programmatic `scrollToIndex` |
 | `useFormValidation` | **State & Forms** | Reactive form validation pipeline | Field dirty/touched flags, async validators, debounced execution |
 | `useLocalStorageState` | **State & Persistence** | Synchronized cross-tab storage | SSR-safe, custom (de)serialization, `StorageEvent` listeners |
+| `useHistoryState` | **State & Time-Travel** | Undo/redo state history with bounded stack | Linear snapshots, canUndo/canRedo flags, commit & reset controls |
 | `useNetworkStatus` | **Hardware & Web API** | Network connection & quality telemetry | Effective connection type (`4g`/`3g`), downlink, RTT, online/offline |
 | `useIntersectionObserver` | **DOM & Visibility** | Viewport visibility tracker | Configurable thresholds, root margins, `freezeOnceVisible` |
 | `useDebouncedRef` | **Timing Primitives** | Debounced reactive state | Immediate flush, pending state tracking, manual cancellation |
