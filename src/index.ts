@@ -15,4 +15,5 @@ export * from "./composables/useDebouncedQuery";
 export * from "./composables/useWebSocket";
 export * from "./composables/usePrevious";
 export * from "./composables/useHistoryState";
+export * from "./composables/useElementSize";
 
